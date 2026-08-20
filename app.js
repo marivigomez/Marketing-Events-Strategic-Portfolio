@@ -56,7 +56,7 @@ function renderEducation() {
   container.innerHTML = t()
     .education_items.map(
       (edu) => `
-        <div class="p-8 bg-white border border-neutral-100 rounded-2xl hover:shadow-xl hover:shadow-neutral-100 transition-all group flex flex-col h-full">
+        <div class="lift-card p-8 bg-white border border-neutral-100 rounded-2xl hover:shadow-xl hover:shadow-neutral-100 group flex flex-col h-full">
             <span class="text-[10px] font-bold accent-pink uppercase tracking-widest block mb-4">${edu.period}</span>
             <div class="flex items-start justify-between mb-4">
                 <h3 class="text-xl serif-font leading-tight group-hover:accent-pink transition-colors pr-2">${edu.degree}</h3>
@@ -309,4 +309,9 @@ window.addEventListener("DOMContentLoaded", () => {
       sendMessage();
     }
   });
+
+  const nav = document.getElementById("main-nav");
+  const toggleNavShadow = () => nav.classList.toggle("scrolled", window.scrollY > 8);
+  window.addEventListener("scroll", toggleNavShadow, { passive: true });
+  toggleNavShadow();
 });

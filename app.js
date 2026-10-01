@@ -76,7 +76,7 @@ function renderSkills() {
     .skills_items.map(
       (skill) => `
         <div class="bg-[#0A0A0A] p-12 group hover:bg-[#111111] transition-colors">
-            <div class="accent-pink mb-8 transform group-hover:scale-110 transition-transform">
+            <div class="skill-icon-wrap accent-pink mb-8">
                 <i data-lucide="${skill.icon}" style="width:20px;height:20px"></i>
             </div>
             <h3 class="text-xl font-medium mb-6 uppercase tracking-tight">${skill.name}</h3>
@@ -104,7 +104,8 @@ function renderExperience() {
             <div class="lg:col-span-4 lg:sticky lg:top-32 h-fit">
                 <span class="text-xs font-bold accent-pink uppercase tracking-widest mb-4 block">${exp.period}</span>
                 <h3 class="text-4xl serif-font text-black leading-none mb-2">${exp.role}</h3>
-                <p class="text-xl text-neutral-400 italic mb-6">${exp.company}</p>
+                <p class="text-xl text-neutral-400 italic mb-2">${exp.company}</p>
+                ${exp.companyBadge ? `<p class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest accent-pink mb-4"><i data-lucide="badge-check" style="width:13px;height:13px"></i>${exp.companyBadge}</p>` : `<div class="mb-4"></div>`}
                 <div class="flex flex-wrap gap-2">
                     ${exp.tags.map((tg) => `<span class="px-3 py-1 bg-neutral-100 text-[10px] font-bold uppercase rounded-full">${tg}</span>`).join("")}
                 </div>
@@ -203,10 +204,7 @@ async function sendMessage() {
   chatMessages.push({ role: "assistant", text: `<div class="loader"></div> ${t().chat.thinking}` });
   renderChatMessages();
 
-  const messages = [
-    { role: "system", content: t().ai_context },
-    { role: "user", content: text },
-  ];
+  const messages = [{ role: "user", content: `${t().ai_context}\n\nPregunta del visitante: ${text}` }];
   const reply = await callAI(messages, { max_tokens: 250, temperature: 0.7 });
 
   chatMessages[chatMessages.length - 1].text = reply || t().chat.error;
@@ -227,11 +225,8 @@ async function analyzeMatch() {
   btn.innerHTML = `<div class="loader mr-2"></div> ${dict.ailab.analyzing}`;
   btn.disabled = true;
 
-  const system = `${dict.ai_context}\nEvaluate how well Mariví Gómez fits the following job description. Respond EXACTLY in this format, nothing else:\nScore: [Number from 0 to 100]%\n- [Reason 1]\n- [Reason 2]\n- [Reason 3]`;
-  const messages = [
-    { role: "system", content: system },
-    { role: "user", content: `Job Description: ${desc}` },
-  ];
+  const instructions = `${dict.ai_context}\nEvaluate how well Mariví Gómez fits the following job description. Respond EXACTLY in this format, nothing else:\nScore: [Number from 0 to 100]%\n- [Reason 1]\n- [Reason 2]\n- [Reason 3]\n\nJob Description: ${desc}`;
+  const messages = [{ role: "user", content: instructions }];
 
   const aiResponse = await callAI(messages, { max_tokens: 200, temperature: 0.6 });
 
@@ -264,11 +259,8 @@ async function generateEventStrategy() {
   btn.innerHTML = `<div class="loader mr-2"></div> ${dict.ailab.generating}`;
   btn.disabled = true;
 
-  const system = `You are Mariví's AI Event Strategist. Generate a brief event proposal for the given goal, in the same language as the goal. Format EXACTLY like this:\nTITLE: [Catchy Event Name]\nCONCEPT: [2 sentences describing the creative concept]\nKPI 1: [Metric 1]\nKPI 2: [Metric 2]\nKPI 3: [Metric 3]`;
-  const messages = [
-    { role: "system", content: system },
-    { role: "user", content: `Goal: ${goal}` },
-  ];
+  const instructions = `You are Mariví's AI Event Strategist. Generate a brief event proposal for the given goal, in the same language as the goal. Format EXACTLY like this:\nTITLE: [Catchy Event Name]\nCONCEPT: [2 sentences describing the creative concept]\nKPI 1: [Metric 1]\nKPI 2: [Metric 2]\nKPI 3: [Metric 3]\n\nGoal: ${goal}`;
+  const messages = [{ role: "user", content: instructions }];
 
   const aiResponse = await callAI(messages, { max_tokens: 220, temperature: 0.8 });
 
@@ -317,4 +309,26 @@ window.addEventListener("DOMContentLoaded", () => {
   const toggleNavShadow = () => nav.classList.toggle("scrolled", window.scrollY > 8);
   window.addEventListener("scroll", toggleNavShadow, { passive: true });
   toggleNavShadow();
+
+  initScrollReveal();
 });
+
+// ============= ANIMACIONES AL HACER SCROLL =============
+function initScrollReveal() {
+  const revealEls = document.querySelectorAll(".reveal");
+  if (!revealEls.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+  );
+
+  revealEls.forEach((el) => observer.observe(el));
+}

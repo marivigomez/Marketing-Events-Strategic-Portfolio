@@ -37,6 +37,35 @@
     input:focus-visible, textarea:focus-visible, button:focus-visible {
       outline: 2px solid #fa008a; outline-offset: 2px;
     }
+
+    /* Revelado animado al hacer scroll */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s cubic-bezier(.22,.61,.36,1), transform .8s cubic-bezier(.22,.61,.36,1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1.is-visible { transition-delay: .08s; }
+    .reveal-delay-2.is-visible { transition-delay: .16s; }
+    .reveal-delay-3.is-visible { transition-delay: .24s; }
+
+    /* Subrayado animado en los enlaces del menú */
+    .nav-underline { position: relative; }
+    .nav-underline::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1.5px;
+      background: #fa008a; transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
+    }
+    .nav-underline:hover::after { transform: scaleX(1); }
+
+    /* Botones con ligero "press" al hacer click */
+    .btn-primary, .btn-secondary { transition: all .3s, transform .15s ease; }
+    .btn-primary:active, .btn-secondary:active { transform: scale(.97); }
+
+    /* Brillo sutil en los iconos de skill al pasar el cursor */
+    .skill-icon-wrap { transition: transform .4s ease, color .4s ease; }
+    .group:hover .skill-icon-wrap { transform: scale(1.15) rotate(-4deg); }
+
+    /* Scroll suave con atención a la barra fija */
+    html { scroll-padding-top: 90px; }
+
+    .scroll-cue { animation: bounce 2.2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100% { transform: translateY(0); opacity:.5; } 50% { transform: translateY(8px); opacity:1; } }
   </style>
  </head>
  <body>
@@ -48,11 +77,11 @@
      <span class="serif-font text-xl font-bold tracking-tighter text-black">Mariví Gómez</span>
     </div>
     <div class="hidden md:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 items-center">
-        <a href="#about" class="hover-pink transition-colors" data-i18n="nav.profile"></a>
-        <a href="#education" class="hover-pink transition-colors" data-i18n="nav.education"></a>
-        <a href="#experience" class="hover-pink transition-colors" data-i18n="nav.experience"></a>
-        <a href="#skills" class="hover-pink transition-colors" data-i18n="nav.skills"></a>
-        <a href="#ai-lab" class="hover-pink transition-colors flex items-center gap-1"><i data-lucide="zap" style="width:12px;height:12px" class="accent-pink"></i><span data-i18n="nav.ailab"></span></a>
+        <a href="#about" class="nav-underline hover-pink transition-colors" data-i18n="nav.profile"></a>
+        <a href="#education" class="nav-underline hover-pink transition-colors" data-i18n="nav.education"></a>
+        <a href="#experience" class="nav-underline hover-pink transition-colors" data-i18n="nav.experience"></a>
+        <a href="#skills" class="nav-underline hover-pink transition-colors" data-i18n="nav.skills"></a>
+        <a href="#ai-lab" class="nav-underline hover-pink transition-colors flex items-center gap-1"><i data-lucide="zap" style="width:12px;height:12px" class="accent-pink"></i><span data-i18n="nav.ailab"></span></a>
         <span class="flex gap-2 pl-4 border-l border-neutral-200">
           <button class="lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
           <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -65,7 +94,8 @@
    </nav>
 
    <!-- Header -->
-   <header id="about" class="pt-40 pb-24 px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start animate-fade-in">
+   <header id="about" class="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 py-28 animate-fade-in">
+    <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
     <div class="space-y-8">
      <div class="flex items-center gap-3">
          <span class="h-[1px] w-12 accent-pink"></span>
@@ -74,13 +104,17 @@
      </div>
      <h1 class="text-6xl md:text-[84px] serif-font leading-[0.95] tracking-tighter text-black" data-i18n-html="header.title"></h1>
      <p class="text-xl text-neutral-500 font-light max-w-lg leading-relaxed" data-i18n="header.desc"></p>
+     <div class="inline-flex items-center gap-2 px-4 py-2 bg-[#fa008a]/10 rounded-full">
+       <i data-lucide="badge-check" style="width:14px;height:14px" class="accent-pink shrink-0"></i>
+       <span class="text-[10px] font-bold uppercase tracking-widest accent-pink" data-i18n="header.eu_badge"></span>
+     </div>
      <div class="flex flex-wrap gap-5 pt-4">
          <button onclick="openChat()" class="btn-primary px-10 py-5 flex items-center gap-3 rounded-full group">
            <span data-i18n="header.cta"></span> ✨ <i data-lucide="arrow-right" style="width:20px;height:20px" class="group-hover:translate-x-1 transition-transform"></i>
          </button>
       <div class="flex items-center gap-6 px-4 border-l border-neutral-200">
-          <a href="https://www.linkedin.com/in/marivi-gomez-marketingspecialist/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center hover-pink cursor-pointer transition-colors"><i data-lucide="linkedin" style="width:20px;height:20px"></i></a>
-          <a href="mailto:marivigomez01@gmail.com" class="flex items-center justify-center hover-pink cursor-pointer transition-colors"><i data-lucide="mail" style="width:20px;height:20px"></i></a>
+          <a href="https://www.linkedin.com/in/marivi-gomez-marketingspecialist/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center hover-pink cursor-pointer transition-colors hover:-translate-y-0.5"><i data-lucide="linkedin" style="width:20px;height:20px"></i></a>
+          <a href="mailto:marivigomez01@gmail.com" class="flex items-center justify-center hover-pink cursor-pointer transition-colors hover:-translate-y-0.5"><i data-lucide="mail" style="width:20px;height:20px"></i></a>
           <span class="text-xs font-bold uppercase tracking-widest text-neutral-400" data-i18n="header.location"></span>
       </div>
      </div>
@@ -117,30 +151,34 @@
       </div>
      </div>
     </div>
+    </div>
+    <a href="#education" class="scroll-cue hidden md:flex justify-center mt-16 text-neutral-300 hover-pink transition-colors" aria-label="Scroll down">
+      <i data-lucide="chevron-down" style="width:28px;height:28px"></i>
+    </a>
    </header>
 
    <!-- Education -->
    <section id="education" class="py-24 px-6 md:px-24 max-w-7xl mx-auto border-t border-neutral-100 w-full">
-    <div class="flex items-center gap-4 mb-16"><i data-lucide="graduation-cap" style="width:32px;height:32px" class="accent-pink"></i>
+    <div class="reveal flex items-center gap-4 mb-16"><i data-lucide="graduation-cap" style="width:32px;height:32px" class="accent-pink"></i>
      <h2 class="text-4xl serif-font italic" data-i18n="education.title"></h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="education-container"></div>
+    <div class="reveal reveal-delay-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="education-container"></div>
    </section>
 
    <!-- Skills -->
    <section id="skills" class="bg-[#0A0A0A] text-white py-32 px-6 md:px-24 w-full">
     <div class="max-w-7xl mx-auto">
-     <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
+     <div class="reveal grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
       <h2 class="text-5xl serif-font leading-tight" data-i18n-html="skills.title"></h2>
       <p class="text-neutral-400 text-lg font-light leading-relaxed flex items-end" data-i18n="skills.desc"></p>
      </div>
-     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-800 border border-neutral-800" id="skills-container"></div>
+     <div class="reveal reveal-delay-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-800 border border-neutral-800" id="skills-container"></div>
     </div>
    </section>
 
    <!-- Experience -->
    <section id="experience" class="py-32 px-6 md:px-24 max-w-7xl mx-auto w-full">
-    <div class="flex flex-col md:flex-row justify-between items-baseline mb-24 gap-8">
+    <div class="reveal flex flex-col md:flex-row justify-between items-baseline mb-24 gap-8">
      <h2 class="text-5xl serif-font italic" data-i18n="experience.title"></h2>
      <div class="flex gap-4 border-b border-neutral-100 pb-2" id="filter-buttons"></div>
     </div>
@@ -150,12 +188,12 @@
    <!-- AI Lab -->
    <section id="ai-lab" class="bg-[#F8F8F8] py-32 px-6 md:px-24 border-y border-neutral-100 w-full">
     <div class="max-w-6xl mx-auto">
-     <div class="text-center mb-20 space-y-4">
+     <div class="reveal text-center mb-20 space-y-4">
       <div class="inline-block bg-white p-4 rounded-3xl shadow-sm mb-6"><i data-lucide="brain-circuit" style="width:40px;height:40px" class="accent-pink"></i></div>
       <h2 class="text-5xl serif-font italic" data-i18n="ailab.title"></h2>
       <p class="text-neutral-500 max-w-xl mx-auto" data-i18n="ailab.desc"></p>
      </div>
-     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+     <div class="reveal reveal-delay-1 grid grid-cols-1 lg:grid-cols-2 gap-12">
 
       <!-- Match Simulator -->
       <div class="lift-card bg-white p-10 rounded-3xl shadow-xl shadow-neutral-200/50 flex flex-col">

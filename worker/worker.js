@@ -2,7 +2,8 @@
  * marivi-hf-proxy
  * -----------------------------------------------------------------
  * Proxy serverless (Cloudflare Worker) entre el portfolio estático
- * (GitHub Pages) y la API de Inference de Hugging Face.
+ * (GitHub Pages) y la API de Inference Providers de Hugging Face
+ * (el "router" de chat compatible con OpenAI).
  *
  * El token de Hugging Face (HF_TOKEN) se guarda como "secret" de
  * Cloudflare y NUNCA se envía al navegador ni se sube al repositorio.
@@ -45,43 +46,53 @@ export default {
     }
 
     try {
-      const { prompt, max_new_tokens, temperature } = await request.json();
+      const { messages, max_tokens, temperature } = await request.json();
 
-      if (!prompt || typeof prompt !== "string") {
-        return new Response(JSON.stringify({ error: "Falta el campo 'prompt'" }), {
+      if (!messages || !Array.isArray(messages) || messages.length === 0) {
+        return new Response(JSON.stringify({ error: "Falta el campo 'messages' (array)" }), {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders(env) },
         });
       }
 
-      const model = env.HF_MODEL || "Qwen/Qwen2.5-72B-Instruct";
+      const model = env.HF_MODEL || "openai/gpt-oss-20b:groq";
 
-      const hfResponse = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+      // Hugging Face Inference Providers: endpoint "router", compatible con
+      // el formato de Chat Completions de OpenAI (mensajes con role/content).
+      const hfResponse = await fetch("https://router.huggingface.co/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${env.HF_TOKEN}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_new_tokens: max_new_tokens || 250,
-            temperature: temperature || 0.7,
-            return_full_text: false,
-          },
+          model,
+          messages,
+          max_tokens: max_tokens || 250,
+          temperature: temperature || 0.7,
         }),
       });
 
       const data = await hfResponse.json();
 
       if (!hfResponse.ok) {
-        return new Response(JSON.stringify({ error: data.error || "Error en Hugging Face" }), {
+        const message = data?.error?.message || data?.error || "Error en Hugging Face";
+        return new Response(JSON.stringify({ error: message }), {
           status: hfResponse.status,
           headers: { "Content-Type": "application/json", ...corsHeaders(env) },
         });
       }
 
-      return new Response(JSON.stringify(data), {
+      const text = data?.choices?.[0]?.message?.content?.trim() || null;
+
+      if (!text) {
+        return new Response(JSON.stringify({ error: "Respuesta vacía del modelo" }), {
+          status: 502,
+          headers: { "Content-Type": "application/json", ...corsHeaders(env) },
+        });
+      }
+
+      return new Response(JSON.stringify({ text }), {
         headers: { "Content-Type": "application/json", ...corsHeaders(env) },
       });
     } catch (err) {

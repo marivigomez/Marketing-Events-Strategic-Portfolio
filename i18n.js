@@ -6,7 +6,7 @@ const i18n = {
     header: {
       subtitle: "Ejecutiva de Eventos y Marketing",
       title: "Impacto <br>Estratégico <br><span class='italic text-neutral-300'>Creativo.</span>",
-      desc: "Ejecutiva de Eventos y Marketing con casi dos años de experiencia gestionando marketing y eventos de principio a fin en Dublín. Creativa, estratégica y orientada a datos, con experiencia práctica en gestión de eventos, redes sociales y vídeo, email marketing, WordPress y compras. Background previo en PPC y gestión de marca. Actualmente completando un programa centrado en aplicar IA a los flujos de trabajo de marketing.",
+      desc: "Especialista en marketing integrado y gestión de eventos con base en Dublín, combinando psicología del consumidor y datos para resultados de alto rendimiento.",
       location: "Dublín | España",
       eu_badge: "Ciudadana UE · Autorizada a trabajar en Irlanda",
       cta: "Pregúntale a la IA",
@@ -126,7 +126,7 @@ const i18n = {
     header: {
       subtitle: "Events & Marketing Executive",
       title: "Strategic <br>Creative <br><span class='italic text-neutral-300'>Impact.</span>",
-      desc: "Events and Marketing Executive with almost two years' experience running end-to-end marketing and events in Dublin. Creative, strategic and data-driven, with hands-on experience in event management, social media and video content, email marketing, WordPress and procurement. Previous background in PPC and brand management. Currently completing a programme focused on applying AI across marketing workflows.",
+      desc: "Integrated marketing specialist and event manager based in Dublin, combining consumer psychology and data for high-performance results.",
       location: "Dublin | Spain",
       eu_badge: "EU Citizen · Eligible to work in Ireland",
       cta: "Ask AI",

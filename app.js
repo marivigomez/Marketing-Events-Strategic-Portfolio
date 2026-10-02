@@ -56,7 +56,7 @@ function renderEducation() {
   container.innerHTML = t()
     .education_items.map(
       (edu) => `
-        <div class="lift-card p-8 bg-white border border-neutral-100 rounded-2xl hover:shadow-xl hover:shadow-neutral-100 group flex flex-col h-full">
+        <div class="lift-card edu-card p-8 bg-white border border-neutral-100 rounded-2xl hover:shadow-xl hover:shadow-neutral-100 group flex flex-col h-full">
             <span class="text-[10px] font-bold accent-pink uppercase tracking-widest block mb-4">${edu.period}</span>
             <div class="flex items-start justify-between mb-4">
                 <h3 class="text-xl serif-font leading-tight group-hover:accent-pink transition-colors pr-2">${edu.degree}</h3>
@@ -81,7 +81,7 @@ function renderSkills() {
             </div>
             <h3 class="text-xl font-medium mb-6 uppercase tracking-tight">${skill.name}</h3>
             <ul class="space-y-3">
-                ${skill.tools.map((tool) => `<li class="text-xs font-bold uppercase tracking-widest text-neutral-500 border-l border-neutral-800 pl-3">${tool}</li>`).join("")}
+                ${skill.tools.map((tool) => `<li class="tool-tag text-xs font-bold uppercase tracking-widest text-neutral-500 border-l border-neutral-800 pl-3">${tool}</li>`).join("")}
             </ul>
         </div>`
     )
@@ -107,7 +107,7 @@ function renderExperience() {
                 <p class="text-xl text-neutral-400 italic mb-2">${exp.company}</p>
                 ${exp.companyBadge ? `<p class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest accent-pink mb-4"><i data-lucide="badge-check" style="width:13px;height:13px"></i>${exp.companyBadge}</p>` : `<div class="mb-4"></div>`}
                 <div class="flex flex-wrap gap-2">
-                    ${exp.tags.map((tg) => `<span class="px-3 py-1 bg-neutral-100 text-[10px] font-bold uppercase rounded-full">${tg}</span>`).join("")}
+                    ${exp.tags.map((tg) => `<span class="tag-pink px-3 py-1 bg-neutral-100 text-[10px] font-bold uppercase rounded-full">${tg}</span>`).join("")}
                 </div>
             </div>
             <div class="lg:col-span-8 border-l border-neutral-100 pl-8 lg:pl-16 space-y-6">
@@ -311,7 +311,24 @@ window.addEventListener("DOMContentLoaded", () => {
   toggleNavShadow();
 
   initScrollReveal();
+  initHeroFade();
 });
+
+// ============= DIFUMINADO DE LA PORTADA AL HACER SCROLL =============
+function initHeroFade() {
+  const heroContent = document.getElementById("hero-content");
+  if (!heroContent) return;
+  const heroHeight = window.innerHeight || 800;
+
+  const updateHeroFade = () => {
+    const progress = Math.min(Math.max(window.scrollY / (heroHeight * 0.8), 0), 1);
+    heroContent.style.opacity = String(1 - progress);
+    heroContent.style.transform = `translateY(${progress * 40}px) scale(${1 - progress * 0.04})`;
+  };
+
+  window.addEventListener("scroll", updateHeroFade, { passive: true });
+  updateHeroFade();
+}
 
 // ============= ANIMACIONES AL HACER SCROLL =============
 function initScrollReveal() {

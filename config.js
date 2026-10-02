@@ -7,4 +7,4 @@
 // proyecto), sustituye la URL de abajo por la que te dé Cloudflare,
 // algo como: https://marivi-hf-proxy.tu-usuario.workers.dev
 // -----------------------------------------------------------------
-const WORKER_URL = "https://marivi-hf-proxy.YOUR-SUBDOMAIN.workers.dev";
+const WORKER_URL = "https://marivi-hf-proxy.marivigomez01.workers.dev";
